@@ -48,7 +48,7 @@ results =
 
 
 page_width =
-    120
+    121
 
 
 to_wrap : String -> String
