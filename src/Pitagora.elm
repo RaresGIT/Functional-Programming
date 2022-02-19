@@ -21,7 +21,7 @@ isTriple x y z =
     --         False
     if ( x == 0 || y == 0 || z == 0 || x < 0 || y < 0 || z < 0) then
         False
-    else    
+    else
     if (x ^ 2 + y ^ 2 == z ^ 2) then
         True
     else
@@ -53,15 +53,15 @@ pythTriple (x, y) =
                 (n1, n2, n3)
 
 first : ( Int, Int, Int ) -> Int
-first (x,y,z) = 
+first (x,y,z) =
     x
 
 second : ( Int, Int, Int ) -> Int
-second (x,y,z) = 
+second (x,y,z) =
     y
 
 third : ( Int, Int, Int ) -> Int
-third (x,y,z) = 
+third (x,y,z) =
     z
 
 stringFromBool : Bool -> String
@@ -72,14 +72,14 @@ stringFromBool value =
   else
     "False"
 
-isTripleTuple: (Int, Int, Int) -> Bool 
-isTripleTuple (x,y,z) = 
+isTripleTuple: (Int, Int, Int) -> Bool
+isTripleTuple (x,y,z) =
     isTriple x y z
 
 var = sqr 4
 leg1_var = leg1 5 4
 leg2_var = leg2 5 4
-hyp_var = hyp 5 4   
+hyp_var = hyp 5 4
 isTriple_var = isTriple 9 40 41
 pythTriple_var = pythTriple (5,4)
 pythTriple_var_first = first pythTriple_var
@@ -103,14 +103,14 @@ my_results =
         "is triple tuple for 9 40 41",
         stringFromBool isTripleTuple_var
 
-        
-    ] 
-    
+
+    ]
+
 -- create main method (Boiler-plate)
 
-to_div my_value = 
+to_div my_value =
     Html.div [] [ my_value |> Html.text ]
 
-main = Html.div 
+main = Html.div
         []
         (List.map to_div my_results)
