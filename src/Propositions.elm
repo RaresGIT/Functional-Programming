@@ -39,10 +39,52 @@ switcheroo input =
         Impl prop prop1 ->  "(" ++ "!" ++ (switcheroo prop) ++ " or " ++  (switcheroo prop1) ++ ")"
         Bi prop prop1 ->  "(" ++ (switcheroo prop) ++ " or " ++  "not " ++ (switcheroo prop1) ++ ")"
         Var string ->  string
+
+members: Proposition -> List String
+members input = 
+    case input of
+        Or prop prop1 -> List.append (members prop) (members prop1)
+        Not prop-> members prop
+        And prop prop1 ->  List.append (members prop) (members prop1)
+        Impl prop prop1 ->  List.append (members prop) (members prop1)
+        Bi prop prop1 ->  List.append (members prop) (members prop1)
+        Var string ->  [string]
+
+parseDemorgan: Proposition -> String
+parseDemorgan input = 
+    case input of
+        Or prop prop1 -> "(" ++ (parseDemorgan prop) ++ " or " ++ (parseDemorgan prop1) ++ ")"
+        Not prop-> if (String.contains "and" (parse prop)) || (String.contains "or" (parse prop)) then (demorgan prop) else "(" ++ "! " ++ (parseDemorgan prop) ++ ")"
+        And prop prop1 ->  "(" ++ (parseDemorgan prop) ++ " and " ++  (parseDemorgan prop1) ++ ")"
+        Impl prop prop1 ->  "(" ++ "!" ++ (parseDemorgan prop) ++ " or " ++  (parseDemorgan prop1) ++ ")"
+        Bi prop prop1 ->  "(" ++ (parseDemorgan prop) ++ " or " ++  "not " ++ (parseDemorgan prop1) ++ ")"
+        Var string ->  string
+
+demorgan: Proposition -> String
+demorgan inputProp = 
+     case inputProp of
+                    Or prop prop1 -> "(" ++ (parse (Not prop)) ++ " or " ++ (parse (Not prop1)) ++ ")"
+                    Not prop -> "(" ++ "! " ++ (parse prop) ++ ")"
+                    And prop prop1 ->  "(" ++ (parse (Not prop)) ++ " and " ++  (parse (Not prop1)) ++ ")"
+                    Impl prop prop1 ->  "(" ++ (parse prop) ++ " => " ++  (parse prop1) ++ ")"
+                    Bi prop prop1 ->  "(" ++ (parse prop) ++ " <=> " ++  (parse prop1) ++ ")"
+                    Var string ->  string
+
+
+unique : List a -> List a
+unique l = 
+    let
+        incUnique : a -> List a -> List a
+        incUnique elem lst = 
+            case List.member elem lst of
+                True -> lst
+                False -> elem :: lst
+    in
+        List.foldr incUnique [] l
+
 results : List String
 results =
-    [ "-- Hello-Elm output --\n\n  Cypher calculations:",
-    --   print (Not (And (Var "A") (Or (Impl (Var "B") (Var "C")) (Bi (Var "D") (Var "E"))))),
+    [ "-- Hello-Elm output --\n\n",
       parse (Not (And (Var "A") (Or (Impl (Var "B") (Var "C")) (Bi (Var "D") (Var "E"))))),
       parse (Impl (Var "B") (Var "C")),
       parse (Or (Impl (Var "B") (Not (Var "C"))) (Bi (Not (Var "D")) (Var "E"))),
@@ -51,6 +93,11 @@ results =
       switcheroo (Not (And (Var "A") (Or (Impl (Var "B") (Var "C")) (Bi (Var "D") (Var "E"))))),
       switcheroo (Impl (Var "B") (Var "C")),
       switcheroo (Or (Impl (Var "B") (Not (Var "C"))) (Bi (Not (Var "D")) (Var "E"))),
+      "-- MEMBERS --",
+      Debug.toString (unique (members (Not (And (Var "A") (Or (Impl (Var "B") (Var "C")) (Bi (Var "D") (Var "A"))))))),
+      "-- DeMorgan -- ",
+      parseDemorgan (Not (And (Var "A") (Or (Impl (Var "B") (Var "C")) (Bi (Var "D") (Var "E"))))),
+      parseDemorgan (Not (Or (Var "A") (Or (Impl (Var "B") (Var "C")) (Bi (Var "D") (Var "E"))))),
       "\n-- end --"
     ]
 
